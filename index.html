@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JobMela - Find Your Dream Career</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fff; color: #111827; }
+    a { text-decoration: none; color: inherit; }
+    button { cursor: pointer; font-family: inherit; }
+    .nav { background: #fff; border-bottom: 1px solid #f3f4f6; position: sticky; top: 0; z-index: 100; box-shadow: 0 1px 8px rgba(0,0,0,0.06); }
+    .nav-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; height: 64px; display: flex; align-items: center; justify-content: space-between; }
+    .nav-brand { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+    .nav-brand svg { width: 32px; height: 32px; fill: #10b981; }
+    .nav-brand span { font-size: 1.2rem; font-weight: 800; color: #111827; }
+    .nav-links { display: flex; align-items: center; gap: 32px; }
+    .nav-links a { font-size: 0.9rem; font-weight: 500; color: #6b7280; transition: color 0.2s; }
+    .nav-links a:hover { color: #10b981; }
+    .nav-admin { font-size: 0.75rem; font-weight: 500; color: #9ca3af; transition: color 0.2s; }
+    .nav-admin:hover { color: #10b981; }
+    .hero { background: linear-gradient(135deg, #fff 0%, #ecfdf5 50%, #fff 100%); padding: 80px 24px; text-align: center; }
+    .hero-inner { max-width: 800px; margin: 0 auto; }
+    .hero-badge { display: inline-flex; align-items: center; gap: 6px; background: #d1fae5; color: #065f46; padding: 6px 16px; border-radius: 999px; font-size: 0.82rem; font-weight: 600; margin-bottom: 24px; }
+    .hero-badge svg { width: 14px; height: 14px; }
+    .hero h1 { font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; line-height: 1.15; margin-bottom: 20px; color: #111827; }
+    .hero h1 span { color: #10b981; }
+    .hero p { font-size: 1.1rem; color: #6b7280; line-height: 1.7; margin-bottom: 40px; max-width: 560px; margin-left: auto; margin-right: auto; }
+    .search-box { background: #fff; border-radius: 20px; box-shadow: 0 8px 40px rgba(0,0,0,0.1); padding: 12px; max-width: 700px; margin: 0 auto 40px; display: flex; gap: 10px; flex-wrap: wrap; }
+    .search-field { flex: 1; min-width: 160px; position: relative; }
+    .search-field svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; stroke: #9ca3af; fill: none; }
+    .search-field input { width: 100%; padding: 14px 14px 14px 44px; background: #f9fafb; border: none; border-radius: 12px; font-size: 0.9rem; font-family: inherit; outline: none; transition: box-shadow 0.2s; }
+    .search-field input:focus { box-shadow: 0 0 0 2px #10b981; background: #fff; }
+    .btn-search { padding: 14px 28px; background: #10b981; color: #fff; border: none; border-radius: 12px; font-size: 0.9rem; font-weight: 700; display: flex; align-items: center; gap: 6px; transition: background 0.2s, transform 0.2s; white-space: nowrap; }
+    .btn-search:hover { background: #059669; transform: scale(1.02); }
+    .btn-search svg { width: 18px; height: 18px; stroke: #fff; fill: none; }
+    .hero-stats { display: flex; justify-content: center; gap: 60px; flex-wrap: wrap; }
+    .hero-stat-num { font-size: 2rem; font-weight: 800; color: #111827; }
+    .hero-stat-label { font-size: 0.85rem; color: #9ca3af; font-weight: 500; margin-top: 2px; }
+    .carousel-section { background: #f9fafb; padding: 60px 24px; }
+    .carousel-section-inner { max-width: 1200px; margin: 0 auto; }
+    .section-heading { text-align: center; margin-bottom: 32px; }
+    .section-heading h2 { font-size: 1.6rem; font-weight: 800; color: #111827; }
+    .section-heading p { font-size: 0.88rem; color: #9ca3af; margin-top: 4px; }
+    .carousel-wrapper { position: relative; padding: 0 28px; }
+    #c-outer { overflow: hidden; border-radius: 20px; }
+    #c-track { display: flex; gap: 16px; transition: transform 0.65s cubic-bezier(0.4,0,0.2,1); will-change: transform; }
+    .c-slide { flex: 0 0 calc(50% - 8px); border-radius: 16px; overflow: hidden; position: relative; aspect-ratio: 4/3; background: #0f172a; box-shadow: 0 8px 32px rgba(0,0,0,0.18); }
+    .c-slide svg { width: 100%; height: 100%; display: block; }
+    .c-slide img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
+    .c-overlay { position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.68) 0%, rgba(0,0,0,0.12) 50%, transparent 100%); display: flex; flex-direction: column; justify-content: flex-end; padding: 20px; }
+    .c-overlay h3 { color: #fff; font-size: clamp(0.85rem, 1.5vw, 1.2rem); font-weight: 800; line-height: 1.3; margin-bottom: 4px; text-shadow: 0 2px 10px rgba(0,0,0,0.6); }
+    .c-overlay p { color: rgba(255,255,255,0.82); font-size: clamp(0.7rem, 1vw, 0.85rem); text-shadow: 0 1px 6px rgba(0,0,0,0.5); }
+    .c-arrow { position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; width: 42px; height: 42px; border-radius: 50%; border: none; background: rgba(255,255,255,0.95); box-shadow: 0 4px 18px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+    .c-arrow:hover { background: #10b981; }
+    .c-arrow:hover svg { stroke: #fff; }
+    .c-arrow svg { width: 18px; height: 18px; stroke: #374151; fill: none; transition: stroke 0.2s; }
+    .c-arrow.prev { left: 0; }
+    .c-arrow.next { right: 0; }
+    .c-dots { display: flex; gap: 8px; justify-content: center; margin-top: 16px; }
+    .c-dot { width: 8px; height: 8px; border-radius: 50%; background: #cbd5e1; border: none; cursor: pointer; padding: 0; transition: all 0.25s; }
+    .c-dot.active { background: #10b981; width: 24px; border-radius: 4px; }
+    .jobs-section { padding: 70px 24px; background: #fff; }
+    .jobs-inner { max-width: 1200px; margin: 0 auto; }
+    .jobs-filters { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; margin-bottom: 32px; }
+    .jobs-filters select { padding: 10px 16px; border: 1px solid #e5e7eb; border-radius: 10px; font-family: inherit; font-size: 0.88rem; color: #374151; background: #fff; outline: none; cursor: pointer; }
+    .jobs-filters select:focus { border-color: #10b981; }
+    .jobs-list { max-width: 860px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+    .job-card { background: #fff; border: 1px solid #f3f4f6; border-radius: 18px; padding: 24px; display: flex; align-items: center; gap: 16px; box-shadow: 0 2px 12px rgba(0,0,0,0.05); transition: transform 0.25s, box-shadow 0.25s; }
+    .job-card:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(0,0,0,0.1); }
+    .job-icon { width: 54px; height: 54px; background: #d1fae5; border-radius: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #10b981; }
+    .job-icon svg { width: 24px; height: 24px; }
+    .job-info { flex: 1; min-width: 0; }
+    .job-title-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 4px; }
+    .job-title { font-size: 1rem; font-weight: 700; color: #111827; }
+    .job-type-badge { font-size: 0.72rem; font-weight: 700; background: #d1fae5; color: #065f46; padding: 2px 10px; border-radius: 999px; }
+    .job-company { font-size: 0.85rem; font-weight: 600; color: #10b981; margin-bottom: 6px; }
+    .job-meta { display: flex; gap: 20px; flex-wrap: wrap; }
+    .job-meta span { font-size: 0.82rem; color: #9ca3af; display: flex; align-items: center; gap: 4px; }
+    .job-meta svg { width: 14px; height: 14px; flex-shrink: 0; }
+    .btn-apply { padding: 10px 22px; background: #10b981; color: #fff; border: none; border-radius: 10px; font-size: 0.88rem; font-weight: 700; flex-shrink: 0; transition: background 0.2s; }
+    .btn-apply:hover { background: #059669; }
+    .no-jobs { display: none; text-align: center; padding: 60px 20px; color: #9ca3af; }
+    .no-jobs h3 { font-size: 1.1rem; font-weight: 700; color: #6b7280; margin-bottom: 6px; }
+    .features-section { background: #f9fafb; padding: 70px 24px; }
+    .features-inner { max-width: 1200px; margin: 0 auto; }
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-top: 40px; }
+    .feature-card { background: #fff; border: 1px solid #f3f4f6; border-radius: 18px; padding: 28px; box-shadow: 0 2px 10px rgba(0,0,0,0.04); transition: transform 0.2s, box-shadow 0.2s; }
+    .feature-card:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(0,0,0,0.08); }
+    .feature-icon { width: 52px; height: 52px; background: #d1fae5; border-radius: 14px; display: flex; align-items: center; justify-content: center; margin-bottom: 18px; color: #10b981; }
+    .feature-icon svg { width: 26px; height: 26px; }
+    .feature-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; color: #111827; }
+    .feature-card p { font-size: 0.85rem; color: #6b7280; line-height: 1.6; }
+    .companies-section { background: #fff; padding: 70px 24px; }
+    .companies-inner { max-width: 1200px; margin: 0 auto; }
+    .companies-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-top: 40px; }
+    .company-tile { background: #f3f4f6; border-radius: 14px; padding: 24px 16px; text-align: center; font-weight: 700; font-size: 0.95rem; color: #374151; transition: background 0.2s; }
+    .company-tile:hover { background: #d1fae5; color: #065f46; }
+    .cta-section { background: #ecfdf5; padding: 70px 24px; text-align: center; }
+    .cta-inner { max-width: 640px; margin: 0 auto; }
+    .cta-inner h2 { font-size: clamp(1.5rem, 3.5vw, 2.2rem); font-weight: 800; color: #111827; margin-bottom: 14px; }
+    .cta-inner p { font-size: 1rem; color: #6b7280; margin-bottom: 32px; }
+    .cta-btns { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+    .btn-primary { padding: 14px 30px; background: #10b981; color: #fff; border: none; border-radius: 12px; font-size: 0.95rem; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; transition: background 0.2s, transform 0.2s; }
+    .btn-primary:hover { background: #059669; transform: scale(1.02); }
+    .btn-primary svg { width: 18px; height: 18px; stroke: #fff; fill: none; }
+    .btn-outline { padding: 14px 30px; background: #fff; color: #10b981; border: 2px solid #10b981; border-radius: 12px; font-size: 0.95rem; font-weight: 700; transition: background 0.2s; }
+    .btn-outline:hover { background: #ecfdf5; }
+    .footer { background: #111827; color: #fff; padding: 64px 24px 32px; }
+    .footer-inner { max-width: 1200px; margin: 0 auto; }
+    .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 40px; margin-bottom: 48px; }
+    .footer-brand { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; }
+    .footer-brand svg { width: 32px; height: 32px; fill: #34d399; }
+    .footer-brand span { font-size: 1.2rem; font-weight: 800; }
+    .footer-desc { font-size: 0.85rem; color: #9ca3af; line-height: 1.7; }
+    .footer-col h4 { font-size: 1rem; font-weight: 700; margin-bottom: 16px; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col ul li a { font-size: 0.85rem; color: #9ca3af; transition: color 0.2s; }
+    .footer-col ul li a:hover { color: #34d399; }
+    .footer-contact li { font-size: 0.85rem; color: #9ca3af; display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+    .footer-contact li svg { width: 16px; height: 16px; flex-shrink: 0; stroke: #9ca3af; fill: none; }
+    .footer-bottom { border-top: 1px solid #1f2937; padding-top: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+    .footer-bottom p { font-size: 0.82rem; color: #6b7280; }
+    .footer-bottom a { font-size: 0.75rem; color: #6b7280; transition: color 0.2s; }
+    .footer-bottom a:hover { color: #34d399; }
+    .modal-backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 200; align-items: flex-start; justify-content: center; padding-top: 80px; }
+    .modal-backdrop.open { display: flex; }
+    .modal-box { background: #fff; border-radius: 20px; width: 100%; max-width: 480px; overflow: hidden; box-shadow: 0 24px 60px rgba(0,0,0,0.2); }
+    .modal-header { background: #10b981; padding: 20px 24px; }
+    .modal-header h2 { color: #fff; font-size: 1.1rem; font-weight: 800; }
+    .modal-header p { color: rgba(255,255,255,0.85); font-size: 0.82rem; margin-top: 4px; }
+    .modal-body { padding: 24px; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 0.82rem; font-weight: 600; color: #374151; margin-bottom: 6px; }
+    .form-group input, .form-group textarea { width: 100%; padding: 10px 14px; border: 1px solid #d1d5db; border-radius: 10px; font-family: inherit; font-size: 0.88rem; outline: none; transition: border-color 0.2s; resize: vertical; }
+    .form-group input:focus, .form-group textarea:focus { border-color: #10b981; }
+    .modal-actions { display: flex; gap: 10px; margin-top: 18px; }
+    .btn-submit { flex: 1; padding: 12px; background: #10b981; color: #fff; border: none; border-radius: 10px; font-size: 0.9rem; font-weight: 700; transition: background 0.2s; }
+    .btn-submit:hover { background: #059669; }
+    .btn-cancel { padding: 12px 20px; background: #f3f4f6; color: #374151; border: none; border-radius: 10px; font-size: 0.9rem; font-weight: 600; transition: background 0.2s; }
+    .btn-cancel:hover { background: #e5e7eb; }
+    .toast { display: none; position: fixed; bottom: 24px; right: 24px; z-index: 300; background: #111827; color: #fff; padding: 14px 20px; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); align-items: center; gap: 10px; font-size: 0.88rem; font-weight: 500; max-width: 320px; }
+    .toast.show { display: flex; }
+    .toast svg { width: 20px; height: 20px; stroke: #34d399; fill: none; flex-shrink: 0; }
+    @media (max-width: 640px) { .nav-links { display: none; } .hero { padding: 50px 16px; } .search-box { flex-direction: column; } .hero-stats { gap: 28px; } .job-card { flex-wrap: wrap; } .btn-apply { width: 100%; } }
+  </style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <div class="nav-brand" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+      <svg viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM10 4h4v2h-4V4zm10 16H4V8h16v12z"/><circle cx="12" cy="14" r="3"/></svg>
+      <span>JobMela</span>
+    </div>
+    <div class="nav-links">
+      <a href="#jobs-section">Jobs</a>
+      <a href="#features-section">Features</a>
+      <a href="#companies-section">Companies</a>
+      <a href="#how-it-works">How It Works</a>
+    </div>
+   
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">
+      <svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+      Over 10,000+ Jobs Available
+    </div>
+    <h1>Find Your Dream <span>Career Today</span></h1>
+    <p>Discover thousands of job opportunities from top companies. Quick job discovery, simple applying process, and land your perfect role in minutes.</p>
+    <div class="search-box">
+      <div class="search-field">
+        <svg stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        <input type="text" id="search-keyword" placeholder="Job title or keyword">
+      </div>
+      <div class="search-field">
+        <svg stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        <input type="text" id="search-location" placeholder="Location">
+      </div>
+      <button class="btn-search" onclick="searchJobs()">
+        <svg stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+        Search
+      </button>
+    </div>
+    <div class="hero-stats">
+      <div><div class="hero-stat-num">10K+</div><div class="hero-stat-label">Active Jobs</div></div>
+      <div><div class="hero-stat-num">5K+</div><div class="hero-stat-label">Companies</div></div>
+      <div><div class="hero-stat-num">50K+</div><div class="hero-stat-label">Job Seekers</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="carousel-section">
+  <div class="carousel-section-inner">
+    <div class="section-heading">
+      <h2>Latest Highlights</h2>
+      <p>Featured banners &amp; announcements</p>
+    </div>
+    <div class="carousel-wrapper">
+      <div id="c-outer"><div id="c-track"></div></div>
+      <button class="c-arrow prev" id="c-prev" onclick="cMove(-1)">
+        <svg stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+      </button>
+      <button class="c-arrow next" id="c-next" onclick="cMove(1)">
+        <svg stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+    <div id="c-dots" class="c-dots"></div>
+  </div>
+</section>
+
+<section class="jobs-section" id="jobs-section">
+  <div class="jobs-inner">
+    <div class="section-heading">
+      <h2>All Job Listings</h2>
+      <p style="color:#6b7280;font-size:.95rem;margin-top:6px;">Browse through all available positions and find your perfect match</p>
+    </div>
+    <div class="jobs-filters">
+      <select id="filter-type" onchange="filterJobs()">
+        <option value="all">All Types</option>
+        <option value="Full-time">Full-time</option>
+        <option value="Part-time">Part-time</option>
+        <option value="Remote">Remote</option>
+        <option value="Contract">Contract</option>
+      </select>
+      <select id="filter-location" onchange="filterJobs()"><option value="all">All Locations</option></select>
+    </div>
+    <div class="jobs-list" id="all-jobs-container"></div>
+    <div class="no-jobs" id="no-jobs-message">
+      <h3>No jobs found</h3><p>Try adjusting your search or filters</p>
+    </div>
+  </div>
+</section>
+
+<section class="features-section" id="features-section">
+  <div class="features-inner">
+    <div class="section-heading" id="how-it-works">
+      <h2>Why Choose JobMela?</h2>
+      <p style="color:#6b7280;font-size:.95rem;margin-top:6px;">We provide the tools and resources you need to land your perfect job faster than ever.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card"><div class="feature-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg></div><h3>Smart Search</h3><p>Advanced AI-powered search to find jobs that match your skills and preferences perfectly.</p></div>
+      <div class="feature-card"><div class="feature-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg></div><h3>Quick Apply</h3><p>Apply to multiple jobs with just one click using your saved profile and resume.</p></div>
+      <div class="feature-card"><div class="feature-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg></div><h3>Job Alerts</h3><p>Get instant notifications when new jobs matching your criteria are posted.</p></div>
+      <div class="feature-card"><div class="feature-icon"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg></div><h3>Verified Jobs</h3><p>All job postings are verified to ensure legitimacy and protect job seekers.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="companies-section" id="companies-section">
+  <div class="companies-inner">
+    <div class="section-heading">
+      <h2>Trusted by Top Companies</h2>
+      <p style="color:#6b7280;font-size:.95rem;margin-top:6px;">Join thousands of leading companies who trust JobMela to find their next great hire.</p>
+    </div>
+    <div class="companies-grid">
+      <div class="company-tile">TechCorp</div>
+      <div class="company-tile">InnovateLab</div>
+      <div class="company-tile">DataFlow</div>
+      <div class="company-tile">CloudSys</div>
+      <div class="company-tile">FinTech+</div>
+      <div class="company-tile">GreenEnergy</div>
+    </div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <div class="cta-inner">
+    <h2>Ready to Start Your Career Journey?</h2>
+    <p>Join thousands of professionals who found their jobs through JobMela.</p>
+    <div class="cta-btns">
+      <a href="#jobs-section" class="btn-primary">Browse Jobs <svg stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg></a>
+      <button class="btn-outline">Learn More</button>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand"><svg viewBox="0 0 24 24"><path d="M20 6h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM10 4h4v2h-4V4zm10 16H4V8h16v12z"/><circle cx="12" cy="14" r="3"/></svg><span>JobMela</span></div>
+        <p class="footer-desc">Your trusted partner in finding the perfect career opportunity. Connecting talent with top employers since 2020.</p>
+      </div>
+      <div class="footer-col"><h4>Quick Links</h4><ul><li><a href="#jobs-section">Jobs</a></li><li><a href="#features-section">Features</a></li><li><a href="#companies-section">Companies</a></li><li><a href="#how-it-works">How It Works</a></li></ul></div>
+      <div class="footer-col"><h4>Resources</h4><ul><li><a href="#">Blog</a></li><li><a href="#">Career Tips</a></li><li><a href="#">Support</a></li><li><a href="#">Privacy Policy</a></li></ul></div>
+      <div class="footer-col"><h4>Contact</h4><ul class="footer-contact"><li><svg stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>hello@jobmela.com</li><li><svg stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>+91 98765 43210</li><li><svg stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>Chennai, Tamil Nadu</li></ul></div>
+    </div>
+    <div class="footer-bottom"><p>© 2024 JobMela. All rights reserved.</p><a href="admin.html">Admin Panel</a></div>
+  </div>
+</footer>
+
+<div class="modal-backdrop" id="apply-modal">
+  <div class="modal-box">
+    <div class="modal-header"><h2>Apply for Position</h2><p id="apply-job-title"></p></div>
+    <div class="modal-body">
+      <form id="apply-form" onsubmit="handleApplySubmit(event)">
+        <div class="form-group"><label>Full Name *</label><input type="text" id="apply-name" required placeholder="Your full name"></div>
+        <div class="form-group"><label>Email *</label><input type="email" id="apply-email" required placeholder="you@email.com"></div>
+        <div class="form-group"><label>Phone</label><input type="tel" id="apply-phone" placeholder="+91 98765 43210"></div>
+        <div class="form-group"><label>Why are you interested? *</label><textarea id="apply-message" rows="3" required placeholder="Tell us why you're a great fit..."></textarea></div>
+        <div class="modal-actions">
+          <button type="submit" class="btn-submit">Submit Application</button>
+          <button type="button" class="btn-cancel" onclick="closeApplyModal()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">
+  <svg stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+  <span id="toast-message"></span>
+</div>
+
+<script>
+const BANNERS = [
+  { id:'b1', title:'Find Your Dream Career', subtitle:'10,000+ verified jobs waiting for you',
+    svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="b1bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0f4c35"/><stop offset="100%" stop-color="#1a7a56"/></linearGradient><radialGradient id="b1orb" cx="72%" cy="28%" r="45%"><stop offset="0%" stop-color="#34d399" stop-opacity="0.28"/><stop offset="100%" stop-color="transparent"/></radialGradient></defs><rect width="800" height="600" fill="url(#b1bg)"/><rect width="800" height="600" fill="url(#b1orb)"/><rect x="520" y="180" width="65" height="420" rx="4" fill="#064e3b" opacity="0.85"/><rect x="600" y="140" width="85" height="460" rx="4" fill="#064e3b" opacity="0.75"/><rect x="700" y="200" width="55" height="400" rx="4" fill="#064e3b" opacity="0.80"/><rect x="455" y="260" width="45" height="340" rx="4" fill="#064e3b" opacity="0.65"/><rect x="528" y="200" width="11" height="8" rx="2" fill="#6ee7b7" opacity="0.9"/><rect x="546" y="200" width="11" height="8" rx="2" fill="#34d399" opacity="0.8"/><rect x="528" y="222" width="11" height="8" rx="2" fill="#a7f3d0" opacity="0.85"/><rect x="612" y="160" width="13" height="9" rx="2" fill="#6ee7b7" opacity="0.9"/><rect x="632" y="160" width="13" height="9" rx="2" fill="#34d399" opacity="0.85"/><rect x="652" y="160" width="13" height="9" rx="2" fill="#a7f3d0" opacity="0.75"/><circle cx="630" cy="75" r="60" fill="#34d399" fill-opacity="0.1"/><text x="55" y="215" font-family="sans-serif" font-size="55" font-weight="900" fill="white">Find Your</text><text x="55" y="278" font-family="sans-serif" font-size="55" font-weight="900" fill="#34d399">Dream Career</text><text x="57" y="332" font-family="sans-serif" font-size="22" fill="rgba(255,255,255,0.82)">10,000+ verified jobs waiting for you</text><rect x="57" y="360" width="190" height="46" rx="23" fill="#10b981"/><text x="152" y="389" font-family="sans-serif" font-size="17" font-weight="700" fill="white" text-anchor="middle">Browse Jobs →</text></svg>`
+  },
+  { id:'b2', title:'Top Companies Are Hiring', subtitle:'5,000+ verified employers on JobMela',
+    svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="b2bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#0f172a"/><stop offset="60%" stop-color="#1e293b"/><stop offset="100%" stop-color="#134e4a"/></linearGradient><radialGradient id="b2orb" cx="76%" cy="24%" r="48%"><stop offset="0%" stop-color="#10b981" stop-opacity="0.2"/><stop offset="100%" stop-color="transparent"/></radialGradient></defs><rect width="800" height="600" fill="url(#b2bg)"/><rect width="800" height="600" fill="url(#b2orb)"/><rect x="455" y="85" width="165" height="72" rx="14" fill="#1e293b" stroke="#34d399" stroke-width="1.5" stroke-opacity="0.5"/><rect x="455" y="172" width="165" height="72" rx="14" fill="#1e293b" stroke="#34d399" stroke-width="1.5" stroke-opacity="0.4"/><rect x="455" y="259" width="165" height="72" rx="14" fill="#1e293b" stroke="#34d399" stroke-width="1.5" stroke-opacity="0.45"/><rect x="455" y="346" width="165" height="72" rx="14" fill="#1e293b" stroke="#34d399" stroke-width="1.5" stroke-opacity="0.38"/><circle cx="482" cy="121" r="17" fill="#064e3b"/><text x="482" y="127" font-family="sans-serif" font-size="14" text-anchor="middle" fill="#34d399" font-weight="700">TC</text><text x="507" y="117" font-family="sans-serif" font-size="13" font-weight="700" fill="white">TechCorp</text><text x="507" y="133" font-family="sans-serif" font-size="11" fill="#94a3b8">120 open roles</text><circle cx="482" cy="208" r="17" fill="#1e3a5f"/><text x="482" y="214" font-family="sans-serif" font-size="14" text-anchor="middle" fill="#60a5fa" font-weight="700">IL</text><text x="507" y="204" font-family="sans-serif" font-size="13" font-weight="700" fill="white">InnovateLab</text><text x="507" y="220" font-family="sans-serif" font-size="11" fill="#94a3b8">84 open roles</text><circle cx="482" cy="295" r="17" fill="#3b1f5e"/><text x="482" y="301" font-family="sans-serif" font-size="14" text-anchor="middle" fill="#c084fc" font-weight="700">DF</text><text x="507" y="291" font-family="sans-serif" font-size="13" font-weight="700" fill="white">DataFlow</text><text x="507" y="307" font-family="sans-serif" font-size="11" fill="#94a3b8">67 open roles</text><circle cx="482" cy="382" r="17" fill="#1a3a2a"/><text x="482" y="388" font-family="sans-serif" font-size="14" text-anchor="middle" fill="#34d399" font-weight="700">GE</text><text x="507" y="378" font-family="sans-serif" font-size="13" font-weight="700" fill="white">GreenEnergy</text><text x="507" y="394" font-family="sans-serif" font-size="11" fill="#94a3b8">43 open roles</text><text x="50" y="200" font-family="sans-serif" font-size="48" font-weight="900" fill="white">Top Companies</text><text x="50" y="258" font-family="sans-serif" font-size="48" font-weight="900" fill="#34d399">Are Hiring Now</text><text x="52" y="308" font-family="sans-serif" font-size="20" fill="rgba(255,255,255,0.74)">5,000+ verified employers on JobMela</text></svg>`
+  },
+  { id:'b3', title:'Apply in 60 Seconds', subtitle:'Smart tools to land your perfect role faster',
+    svg:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="b3bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#065f46"/><stop offset="50%" stop-color="#0e7490"/><stop offset="100%" stop-color="#1e40af"/></linearGradient><radialGradient id="b3o1" cx="78%" cy="22%" r="48%"><stop offset="0%" stop-color="#34d399" stop-opacity="0.22"/><stop offset="100%" stop-color="transparent"/></radialGradient><radialGradient id="b3o2" cx="18%" cy="82%" r="38%"><stop offset="0%" stop-color="#38bdf8" stop-opacity="0.18"/><stop offset="100%" stop-color="transparent"/></radialGradient></defs><rect width="800" height="600" fill="url(#b3bg)"/><rect width="800" height="600" fill="url(#b3o1)"/><rect width="800" height="600" fill="url(#b3o2)"/><circle cx="620" cy="295" r="145" fill="white" fill-opacity="0.055" stroke="white" stroke-opacity="0.14" stroke-width="2"/><circle cx="620" cy="295" r="112" fill="white" fill-opacity="0.035" stroke="#34d399" stroke-opacity="0.28" stroke-width="1.5"/><text x="620" y="280" font-family="sans-serif" font-size="54" font-weight="900" fill="white" text-anchor="middle">60</text><text x="620" y="316" font-family="sans-serif" font-size="19" fill="rgba(255,255,255,0.7)" text-anchor="middle">seconds</text><line x1="620" y1="158" x2="620" y2="174" stroke="white" stroke-width="3" stroke-opacity="0.5"/><line x1="758" y1="295" x2="742" y2="295" stroke="white" stroke-width="3" stroke-opacity="0.5"/><line x1="620" y1="432" x2="620" y2="416" stroke="white" stroke-width="3" stroke-opacity="0.5"/><line x1="482" y1="295" x2="498" y2="295" stroke="white" stroke-width="3" stroke-opacity="0.5"/><line x1="620" y1="295" x2="620" y2="190" stroke="#34d399" stroke-width="3.5" stroke-linecap="round"/><line x1="620" y1="295" x2="697" y2="342" stroke="white" stroke-width="3" stroke-linecap="round"/><circle cx="620" cy="295" r="7" fill="#34d399"/><text x="52" y="195" font-family="sans-serif" font-size="54" font-weight="900" fill="white">Apply in</text><text x="52" y="258" font-family="sans-serif" font-size="54" font-weight="900" fill="#67e8f9">60 Seconds</text><text x="54" y="308" font-family="sans-serif" font-size="20" fill="rgba(255,255,255,0.82)">Smart tools to land your perfect role faster</text><rect x="54" y="336" width="126" height="42" rx="21" fill="rgba(255,255,255,0.14)" stroke="rgba(255,255,255,0.32)" stroke-width="1.2"/><text x="117" y="362" font-family="sans-serif" font-size="15" fill="white" text-anchor="middle">⚡ Quick Apply</text><rect x="192" y="336" width="118" height="42" rx="21" fill="rgba(255,255,255,0.14)" stroke="rgba(255,255,255,0.32)" stroke-width="1.2"/><text x="251" y="362" font-family="sans-serif" font-size="15" fill="white" text-anchor="middle">🎯 Smart Match</text><rect x="322" y="336" width="105" height="42" rx="21" fill="rgba(255,255,255,0.14)" stroke="rgba(255,255,255,0.32)" stroke-width="1.2"/><text x="374" y="362" font-family="sans-serif" font-size="15" fill="white" text-anchor="middle">🔔 Alerts</text></svg>`
+  }
+];
+
+let cIdx=0,cList=[],cTimer=null,cCfg={mode:'auto',speed:4000,infinite:true};
+function storedImages(){try{return JSON.parse(localStorage.getItem('jobmela_carousel_images')||'[]')}catch{return[]}}
+function storedSettings(){const d={mode:'auto',speed:4000,infinite:true};try{return{...d,...JSON.parse(localStorage.getItem('jobmela_carousel_settings')||'{}')}}catch{return d}}
+function buildList(){const stored=storedImages();const hiddenIds=new Set(stored.filter(s=>s.status==='hide').map(s=>s.id));const hc=BANNERS.filter(b=>!hiddenIds.has(b.id)).map(b=>({type:'svg',id:b.id,title:b.title,subtitle:b.subtitle,svg:b.svg}));const extras=stored.filter(s=>!BANNERS.find(b=>b.id===s.id)&&s.status==='show').map(s=>({type:'img',id:s.id,title:s.title||'',subtitle:s.subtitle||'',dataUrl:s.dataUrl}));return[...hc,...extras]}
+function buildCarousel(){clearInterval(cTimer);cCfg=storedSettings();cList=buildList();cIdx=0;const track=document.getElementById('c-track'),dots=document.getElementById('c-dots'),prev=document.getElementById('c-prev'),next=document.getElementById('c-next');if(!cList.length){track.innerHTML='<div style="flex:0 0 100%;aspect-ratio:4/3;background:linear-gradient(135deg,#064e3b,#10b981);display:flex;align-items:center;justify-content:center;color:white;border-radius:16px;font-weight:700;">No banners yet</div>';dots.innerHTML='';prev.style.display='none';next.style.display='none';return}prev.style.display='';next.style.display='';track.innerHTML=cList.map(img=>{const media=img.type==='svg'?`<div style="width:100%;height:100%;">${img.svg}</div>`:`<img src="${img.dataUrl}" alt="${img.title}">`;return`<div class="c-slide">${media}<div class="c-overlay">${img.title?`<h3>${img.title}</h3>`:''}${img.subtitle?`<p>${img.subtitle}</p>`:''}</div></div>`}).join('');const pages=Math.ceil(cList.length/2);dots.innerHTML=Array.from({length:pages},(_,i)=>`<button class="c-dot${i===0?' active':''}" onclick="cGoTo(${i})"></button>`).join('');cSetPos(0,false);if(cCfg.mode==='auto'&&pages>1){cTimer=setInterval(()=>{let n=cIdx+1;if(n>=pages)n=cCfg.infinite?0:pages-1;cGoTo(n)},cCfg.speed)}}
+function cSetPos(idx,animate=true){const track=document.getElementById('c-track'),outer=document.getElementById('c-outer');const step=outer.offsetWidth+16;track.style.transition=animate?'transform 0.65s cubic-bezier(0.4,0,0.2,1)':'none';track.style.transform=`translateX(-${idx*step}px)`;document.querySelectorAll('#c-dots .c-dot').forEach((d,i)=>d.classList.toggle('active',i===idx))}
+function cGoTo(idx){cIdx=idx;cSetPos(idx)}
+function cMove(dir){const pages=Math.ceil(cList.length/2);let n=cIdx+dir;if(n<0)n=cCfg.infinite?pages-1:0;if(n>=pages)n=cCfg.infinite?0:pages-1;cGoTo(n)}
+
+const iconMap={code:`<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>`,design:`<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg>`,marketing:`<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>`,finance:`<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`,hr:`<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>`,sales:`<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>`,support:`<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/></svg>`,data:`<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>`};
+const TN_LOCS=['Ariyalur','Chengalpattu','Chennai','Coimbatore','Cuddalore','Dharmapuri','Dindigul','Erode','Kallakurichi','Kanchipuram','Kanniyakumari','Karur','Krishnagiri','Madurai','Mayiladuthurai','Nagapattinam','Namakkal','Nilgiris','Perambalur','Pudukkottai','Ramanathapuram','Ranipet','Salem','Sivaganga','Tenkasi','Thanjavur','Theni','Thoothukudi','Tiruchirappalli','Tirunelveli','Tirupattur','Tiruppur','Tiruvallur','Tiruvannamalai','Tiruvarur','Vellore','Viluppuram','Virudhunagar','Remote'];
+const SAMPLE_JOBS=[{id:'s1',title:'Senior Frontend Developer',company:'TechCorp',location:'Chennai',salary:'₹12,00,000 - ₹16,00,000',type:'Full-time',icon:'code',visible:true},{id:'s2',title:'UX Designer',company:'InnovateLab',location:'Coimbatore',salary:'₹9,00,000 - ₹13,00,000',type:'Full-time',icon:'design',visible:true},{id:'s3',title:'Marketing Manager',company:'DataFlow',location:'Tiruchirappalli',salary:'₹8,50,000 - ₹11,50,000',type:'Full-time',icon:'marketing',visible:true},{id:'s4',title:'Financial Analyst',company:'FinTech+',location:'Madurai',salary:'₹7,50,000 - ₹10,00,000',type:'Full-time',icon:'finance',visible:true},{id:'s5',title:'HR Coordinator',company:'CloudSys',location:'Salem',salary:'₹5,50,000 - ₹7,50,000',type:'Part-time',icon:'hr',visible:true},{id:'s6',title:'Sales Representative',company:'GreenEnergy',location:'Erode',salary:'₹6,00,000 - ₹9,00,000',type:'Full-time',icon:'sales',visible:true},{id:'s7',title:'Data Scientist',company:'DataFlow',location:'Chennai',salary:'₹13,00,000 - ₹18,00,000',type:'Full-time',icon:'data',visible:true},{id:'s8',title:'Customer Support Lead',company:'TechCorp',location:'Vellore',salary:'₹5,00,000 - ₹7,00,000',type:'Full-time',icon:'support',visible:true},{id:'s9',title:'Backend Engineer',company:'InnovateLab',location:'Kanchipuram',salary:'₹10,00,000 - ₹14,00,000',type:'Full-time',icon:'code',visible:true},{id:'s10',title:'Graphic Designer',company:'CreativeHub',location:'Madurai',salary:'₹6,50,000 - ₹9,50,000',type:'Full-time',icon:'design',visible:true},{id:'s11',title:'Digital Marketing Specialist',company:'MediaWorks',location:'Thanjavur',salary:'₹7,00,000 - ₹10,00,000',type:'Full-time',icon:'marketing',visible:true},{id:'s12',title:'Business Analyst',company:'ConsultCorp',location:'Tiruppur',salary:'₹8,00,000 - ₹11,00,000',type:'Full-time',icon:'finance',visible:true}];
+function getJobs(){try{const s=localStorage.getItem('jobmela_jobs');if(s)return JSON.parse(s);localStorage.setItem('jobmela_jobs',JSON.stringify(SAMPLE_JOBS));return SAMPLE_JOBS}catch{return SAMPLE_JOBS}}
+let jobs=getJobs(),applyJob=null;
+function renderJobs(list){const c=document.getElementById('all-jobs-container'),n=document.getElementById('no-jobs-message');const show=list??jobs.filter(j=>j.visible);if(!show.length){c.innerHTML='';n.style.display='block';return}n.style.display='none';c.innerHTML=show.map(j=>`<div class="job-card"><div class="job-icon">${iconMap[j.icon]||iconMap.code}</div><div class="job-info"><div class="job-title-row"><span class="job-title">${j.title}</span><span class="job-type-badge">${j.type}</span></div><div class="job-company">${j.company}</div><div class="job-meta"><span><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>${j.location}</span><span><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>${j.salary}</span></div></div><button class="btn-apply" onclick="openApply('${j.id}')">Apply</button></div>`).join('')}
+function updateLocFilter(){document.getElementById('filter-location').innerHTML='<option value="all">All Locations</option>'+TN_LOCS.map(l=>`<option value="${l}">${l}</option>`).join('')}
+function filterJobs(){const t=document.getElementById('filter-type').value,l=document.getElementById('filter-location').value;let f=jobs.filter(j=>j.visible);if(t!=='all')f=f.filter(j=>j.type===t);if(l!=='all')f=f.filter(j=>j.location===l);renderJobs(f)}
+function searchJobs(){const kw=document.getElementById('search-keyword').value.toLowerCase(),loc=document.getElementById('search-location').value.toLowerCase();let f=jobs.filter(j=>j.visible);if(kw)f=f.filter(j=>j.title.toLowerCase().includes(kw)||j.company.toLowerCase().includes(kw));if(loc)f=f.filter(j=>j.location.toLowerCase().includes(loc));document.getElementById('jobs-section').scrollIntoView({behavior:'smooth'});setTimeout(()=>renderJobs(f),500)}
+function openApply(id){applyJob=jobs.find(j=>j.id===id);if(applyJob){document.getElementById('apply-job-title').textContent=`${applyJob.title} at ${applyJob.company}`;document.getElementById('apply-modal').classList.add('open')}}
+function closeApplyModal(){document.getElementById('apply-modal').classList.remove('open');document.getElementById('apply-form').reset();applyJob=null}
+function handleApplySubmit(e){e.preventDefault();closeApplyModal();showToast('Application submitted successfully!')}
+function showToast(msg){const t=document.getElementById('toast');document.getElementById('toast-message').textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000)}
+buildCarousel();renderJobs();updateLocFilter();
+window.addEventListener('storage',buildCarousel);
+window.addEventListener('resize',()=>cSetPos(cIdx,false));
+</script>
+</body>
+</html>

@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JobMela Admin</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Plus Jakarta Sans', sans-serif; }
+    html, body { height: 100%; margin: 0; }
+    .fade-in { animation: fadeIn 0.5s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .drop-zone { border: 2px dashed #cbd5e1; border-radius: 12px; padding: 2rem 1rem; text-align: center; transition: border-color 0.2s, background 0.2s; cursor: pointer; background: #f8fafc; }
+    .drop-zone.drag-over { border-color: #10b981; background: #ecfdf5; }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+ </head>
+ <body class="h-full bg-white overflow-auto">
+  <div id="app" class="w-full min-h-full">
+
+   <!-- Admin Navigation Bar -->
+   <nav class="bg-gray-900 text-white sticky top-0 z-40 border-b border-gray-800">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+     <div class="flex justify-between items-center h-16">
+      <div class="flex items-center gap-3">
+       <svg class="w-8 h-8 text-emerald-400" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M20 6h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zM10 4h4v2h-4V4zm10 16H4V8h16v12z" />
+        <circle cx="12" cy="14" r="3" />
+       </svg>
+       <span class="text-xl font-bold">JobMela Admin</span>
+      </div>
+      <a href="index.html" class="px-6 py-2 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 transition-colors">Exit Admin</a>
+     </div>
+    </div>
+   </nav>
+
+   <!-- Admin Content -->
+   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Stats Boxes -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
+     <div class="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-6 border border-blue-200">
+      <div class="flex items-center justify-between">
+       <div>
+        <p class="text-blue-600 font-medium text-sm mb-1">Total Jobs Added</p>
+        <p id="stat-total-jobs" class="text-4xl font-bold text-blue-900">0</p>
+       </div>
+       <svg class="w-12 h-12 text-blue-300" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M20 6h-4V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6-2h4v2h-4V4z" />
+       </svg>
+      </div>
+     </div>
+     <div class="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-2xl p-6 border border-emerald-200">
+      <div class="flex items-center justify-between">
+       <div>
+        <p class="text-emerald-600 font-medium text-sm mb-1">Jobs Visible</p>
+        <p id="stat-visible-jobs" class="text-4xl font-bold text-emerald-900">0</p>
+       </div>
+       <svg class="w-12 h-12 text-emerald-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+       </svg>
+      </div>
+     </div>
+     <div class="bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl p-6 border border-orange-200">
+      <div class="flex items-center justify-between">
+       <div>
+        <p class="text-orange-600 font-medium text-sm mb-1">Jobs Hidden</p>
+        <p id="stat-hidden-jobs" class="text-4xl font-bold text-orange-900">0</p>
+       </div>
+       <svg class="w-12 h-12 text-orange-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-4.803m5.596-3.856a3.375 3.375 0 11-4.753-4.753" />
+       </svg>
+      </div>
+     </div>
+    </div>
+
+    <!-- Add Job Form -->
+    <div class="bg-white rounded-2xl shadow-lg p-8 mb-10 border border-gray-200">
+     <h2 class="text-2xl font-bold text-gray-900 mb-6">➕ Add New Job</h2>
+     <form id="add-job-form" onsubmit="handleAddJob(event)" class="space-y-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+       <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-2">Job Title *</label>
+        <input type="text" id="job-title" required placeholder="e.g., Senior Developer" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
+       </div>
+       <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-2">Company Name *</label>
+        <input type="text" id="job-company" required placeholder="e.g., TechCorp" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
+       </div>
+       <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-2">Location *</label>
+        <input type="text" id="job-location" required placeholder="e.g., Chennai" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
+       </div>
+       <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-2">Salary Range *</label>
+        <input type="text" id="job-salary" required placeholder="e.g., ₹5,00,000 - ₹8,00,000" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
+       </div>
+       <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-2">Job Type *</label>
+        <select id="job-type" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
+         <option value="Full-time">Full-time</option>
+         <option value="Part-time">Part-time</option>
+         <option value="Remote">Remote</option>
+         <option value="Contract">Contract</option>
+        </select>
+       </div>
+       <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-2">Icon Category</label>
+        <select id="job-icon" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
+         <option value="code">💻 Code/Tech</option>
+         <option value="design">🎨 Design</option>
+         <option value="marketing">📈 Marketing</option>
+         <option value="finance">💰 Finance</option>
+         <option value="hr">👥 HR</option>
+         <option value="sales">🛒 Sales</option>
+         <option value="support">🎧 Support</option>
+         <option value="data">📊 Data</option>
+        </select>
+       </div>
+      </div>
+      <div class="flex items-center gap-3 bg-gray-50 p-4 rounded-lg">
+       <input type="checkbox" id="job-visible" checked class="w-5 h-5 text-emerald-500 rounded focus:ring-emerald-500">
+       <label for="job-visible" class="text-gray-700 font-medium">Show job immediately (visible on site)</label>
+      </div>
+      <button type="submit" class="w-full px-6 py-3 bg-emerald-500 text-white font-bold rounded-lg hover:bg-emerald-600 transition-all text-lg">✅ Add Job</button>
+     </form>
+    </div>
+
+    <!-- CAROUSEL IMAGE MANAGEMENT -->
+    <div class="bg-white rounded-2xl shadow-lg p-8 mb-10 border border-gray-200">
+     <h2 class="text-2xl font-bold text-gray-900 mb-6">🖼️ Carousel Image Management</h2>
+
+     <div class="drop-zone mb-4" id="drop-zone"
+          onclick="document.getElementById('image-file-input').click()"
+          ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)">
+      <div id="drop-content">
+       <svg class="w-12 h-12 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+       </svg>
+       <p class="text-gray-600 font-semibold">Click to upload or drag &amp; drop</p>
+       <p class="text-gray-400 text-sm mt-1">PNG, JPG, WEBP (max 5MB)</p>
+      </div>
+      <img id="preview-img" src="" alt="Preview" class="hidden mx-auto max-h-48 rounded-lg object-contain mt-3">
+     </div>
+     <input type="file" id="image-file-input" accept="image/*" class="hidden" onchange="onFileSelect(event)">
+
+     <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-4">
+      <div>
+       <label class="block text-sm font-semibold text-gray-700 mb-2">Image Title <span class="text-gray-400 font-normal">(optional)</span></label>
+       <input type="text" id="img-title" placeholder="e.g., Hiring Now!" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
+      </div>
+      <div>
+       <label class="block text-sm font-semibold text-gray-700 mb-2">Subtitle <span class="text-gray-400 font-normal">(optional)</span></label>
+       <input type="text" id="img-subtitle" placeholder="e.g., 200+ roles open" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
+      </div>
+     </div>
+
+     <div class="flex items-center gap-3 bg-gray-50 p-4 rounded-lg mb-4">
+      <input type="checkbox" id="img-show-immediately" checked class="w-5 h-5 text-emerald-500 rounded focus:ring-emerald-500">
+      <label for="img-show-immediately" class="text-gray-700 font-medium">Show on carousel immediately</label>
+     </div>
+
+     <button onclick="uploadImage()" class="w-full px-6 py-3 bg-emerald-500 text-white font-bold rounded-lg hover:bg-emerald-600 transition-all text-lg mb-8">✅ Save Image</button>
+
+     <div id="images-table-body" class="space-y-4"></div>
+     <div id="no-images-msg" class="hidden text-center py-12">
+      <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+      </svg>
+      <p class="text-gray-500 font-medium text-lg">No images uploaded yet. Add your first banner above!</p>
+     </div>
+
+     <!-- Carousel Settings -->
+     <div class="mt-8 pt-8 border-t border-gray-200">
+      <h3 class="text-lg font-bold text-gray-900 mb-5">⚙️ Carousel Settings</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+       <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-2">Slide Mode</label>
+        <select id="carousel-mode" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
+         <option value="auto">Auto Slide</option>
+         <option value="static">Static (Manual)</option>
+        </select>
+       </div>
+       <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-2">Slide Speed</label>
+        <select id="carousel-speed" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
+         <option value="3000">3 seconds</option>
+         <option value="4000" selected>4 seconds</option>
+         <option value="5000">5 seconds</option>
+         <option value="8000">8 seconds</option>
+         <option value="10000">10 seconds</option>
+        </select>
+       </div>
+       <div>
+        <label class="block text-sm font-semibold text-gray-700 mb-2">Infinite Loop</label>
+        <select id="carousel-loop" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all">
+         <option value="true">Infinite Loop ON</option>
+         <option value="false">Infinite Loop OFF</option>
+        </select>
+       </div>
+      </div>
+      <button onclick="saveCarouselSettings()" class="mt-4 w-full px-6 py-3 bg-emerald-500 text-white font-bold rounded-lg hover:bg-emerald-600 transition-all text-lg">Save Settings</button>
+     </div>
+    </div>
+
+    <!-- Manage Jobs Section -->
+    <div class="bg-white rounded-2xl shadow-lg p-8 border border-gray-200">
+     <h2 class="text-2xl font-bold text-gray-900 mb-6">📋 Manage Jobs</h2>
+     <div id="admin-jobs-list" class="space-y-4"></div>
+     <div id="no-admin-jobs" class="hidden text-center py-12">
+      <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+      </svg>
+      <p class="text-gray-500 font-medium text-lg">No jobs added yet. Add your first job above!</p>
+     </div>
+    </div>
+
+   </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 hidden">
+   <div class="bg-gray-900 text-white px-6 py-4 rounded-xl shadow-lg flex items-center gap-3">
+    <svg class="w-6 h-6 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+    <span id="toast-message"></span>
+   </div>
+  </div>
+
+  <script>
+    let pendingFileDataUrl = null;
+
+    function getImages() {
+      try { return JSON.parse(localStorage.getItem('jobmela_carousel_images') || '[]'); } catch { return []; }
+    }
+    function saveImages(arr) { localStorage.setItem('jobmela_carousel_images', JSON.stringify(arr)); }
+
+    function getCarouselSettings() {
+      const d = { mode: 'auto', speed: 4000, infinite: true };
+      try { return { ...d, ...JSON.parse(localStorage.getItem('jobmela_carousel_settings') || '{}') }; } catch { return d; }
+    }
+
+    function onDragOver(e) { e.preventDefault(); document.getElementById('drop-zone').classList.add('drag-over'); }
+    function onDragLeave(e) { document.getElementById('drop-zone').classList.remove('drag-over'); }
+    function onDrop(e) {
+      e.preventDefault();
+      document.getElementById('drop-zone').classList.remove('drag-over');
+      const file = e.dataTransfer.files[0];
+      if (file && file.type.startsWith('image/')) readFile(file);
+    }
+    function onFileSelect(e) {
+      const file = e.target.files[0];
+      if (file) readFile(file);
+    }
+    function readFile(file) {
+      if (file.size > 5 * 1024 * 1024) { showToast('File too large (max 5MB)'); return; }
+      const reader = new FileReader();
+      reader.onload = function(ev) {
+        pendingFileDataUrl = ev.target.result;
+        const preview = document.getElementById('preview-img');
+        preview.src = pendingFileDataUrl;
+        preview.classList.remove('hidden');
+        document.getElementById('drop-content').classList.add('hidden');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function uploadImage() {
+      if (!pendingFileDataUrl) { showToast('Please select an image first'); return; }
+      const title    = document.getElementById('img-title').value.trim();
+      const subtitle = document.getElementById('img-subtitle').value.trim();
+      const show     = document.getElementById('img-show-immediately').checked;
+      const images   = getImages();
+      images.push({
+        id:         'img_' + Date.now(),
+        dataUrl:    pendingFileDataUrl,
+        name:       title || ('Banner ' + (images.length + 1)),
+        title,
+        subtitle,
+        status:     show ? 'show' : 'hide',
+        uploadedAt: new Date().toLocaleDateString()
+      });
+      saveImages(images);
+      pendingFileDataUrl = null;
+      document.getElementById('preview-img').classList.add('hidden');
+      document.getElementById('drop-content').classList.remove('hidden');
+      document.getElementById('img-title').value    = '';
+      document.getElementById('img-subtitle').value = '';
+      document.getElementById('image-file-input').value = '';
+      renderImagesTable();
+      showToast('Image uploaded successfully!');
+    }
+
+    function renderImagesTable() {
+      const images = getImages();
+      const tbody  = document.getElementById('images-table-body');
+      const noMsg  = document.getElementById('no-images-msg');
+      if (images.length === 0) { tbody.innerHTML = ''; noMsg.classList.remove('hidden'); return; }
+      noMsg.classList.add('hidden');
+      tbody.innerHTML = images.map(img => `
+        <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          <img src="${img.dataUrl}" alt="${img.name}" class="w-20 h-14 object-cover rounded-lg border border-gray-200 flex-shrink-0">
+          <div class="flex-1 min-w-0">
+            <div class="flex flex-wrap items-center gap-2 mb-1">
+              <span class="font-bold text-gray-900">${img.name}</span>
+              <span class="px-2.5 py-0.5 text-xs font-semibold rounded-full ${img.status === 'show' ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-200 text-gray-500'}">
+                ${img.status === 'show' ? '● Showing' : '○ Hidden'}
+              </span>
+            </div>
+            <p class="text-gray-500 text-sm">${img.uploadedAt || ''}</p>
+          </div>
+          <div class="flex gap-2 flex-shrink-0">
+            <button onclick="toggleImageStatus('${img.id}')"
+              class="px-4 py-2 text-sm font-medium rounded-lg transition-colors ${img.status === 'show' ? 'bg-gray-100 text-gray-700 hover:bg-gray-200' : 'bg-emerald-100 text-emerald-700 hover:bg-emerald-200'}">
+              ${img.status === 'show' ? 'Hide' : 'Show'}
+            </button>
+            <button onclick="deleteImage('${img.id}')"
+              class="px-4 py-2 text-sm font-medium rounded-lg bg-red-100 text-red-600 hover:bg-red-200 transition-colors">
+              Delete
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function toggleImageStatus(id) {
+      const images = getImages();
+      const img = images.find(i => i.id === id);
+      if (img) {
+        img.status = img.status === 'show' ? 'hide' : 'show';
+        saveImages(images);
+        renderImagesTable();
+        showToast(img.status === 'show' ? 'Image is now showing on carousel!' : 'Image hidden from carousel');
+      }
+    }
+
+    function deleteImage(id) {
+      if (!confirm('Delete this image?')) return;
+      saveImages(getImages().filter(i => i.id !== id));
+      renderImagesTable();
+      showToast('Image deleted');
+    }
+
+    function saveCarouselSettings() {
+      const s = {
+        mode:     document.getElementById('carousel-mode').value,
+        speed:    parseInt(document.getElementById('carousel-speed').value, 10),
+        infinite: document.getElementById('carousel-loop').value === 'true'
+      };
+      localStorage.setItem('jobmela_carousel_settings', JSON.stringify(s));
+      showToast('Carousel settings saved!');
+    }
+
+    function loadCarouselSettings() {
+      const s = getCarouselSettings();
+      document.getElementById('carousel-mode').value  = s.mode;
+      document.getElementById('carousel-speed').value = String(s.speed);
+      document.getElementById('carousel-loop').value  = String(s.infinite);
+    }
+
+    const sampleJobs = [
+      { id:'sample1',  title:'Senior Frontend Developer',    company:'TechCorp',    location:'Chennai',         salary:'₹12,00,000 - ₹16,00,000', type:'Full-time', icon:'code',      visible:true },
+      { id:'sample2',  title:'UX Designer',                  company:'InnovateLab', location:'Coimbatore',      salary:'₹9,00,000 - ₹13,00,000',  type:'Full-time', icon:'design',    visible:true },
+      { id:'sample3',  title:'Marketing Manager',            company:'DataFlow',    location:'Tiruchirappalli', salary:'₹8,50,000 - ₹11,50,000',  type:'Full-time', icon:'marketing', visible:true },
+      { id:'sample4',  title:'Financial Analyst',            company:'FinTech+',    location:'Madurai',         salary:'₹7,50,000 - ₹10,00,000',  type:'Full-time', icon:'finance',   visible:true },
+      { id:'sample5',  title:'HR Coordinator',               company:'CloudSys',    location:'Salem',           salary:'₹5,50,000 - ₹7,50,000',   type:'Part-time', icon:'hr',        visible:true },
+      { id:'sample6',  title:'Sales Representative',         company:'GreenEnergy', location:'Erode',           salary:'₹6,00,000 - ₹9,00,000',   type:'Full-time', icon:'sales',     visible:true },
+      { id:'sample7',  title:'Data Scientist',               company:'DataFlow',    location:'Chennai',         salary:'₹13,00,000 - ₹18,00,000', type:'Full-time', icon:'data',      visible:true },
+      { id:'sample8',  title:'Customer Support Lead',        company:'TechCorp',    location:'Vellore',         salary:'₹5,00,000 - ₹7,00,000',   type:'Full-time', icon:'support',   visible:true },
+      { id:'sample9',  title:'Backend Engineer',             company:'InnovateLab', location:'Kanchipuram',     salary:'₹10,00,000 - ₹14,00,000', type:'Full-time', icon:'code',      visible:true },
+      { id:'sample10', title:'Graphic Designer',             company:'CreativeHub', location:'Madurai',         salary:'₹6,50,000 - ₹9,50,000',   type:'Full-time', icon:'design',    visible:true },
+      { id:'sample11', title:'Digital Marketing Specialist', company:'MediaWorks',  location:'Thanjavur',       salary:'₹7,00,000 - ₹10,00,000',  type:'Full-time', icon:'marketing', visible:true },
+      { id:'sample12', title:'Business Analyst',             company:'ConsultCorp', location:'Tiruppur',        salary:'₹8,00,000 - ₹11,00,000',  type:'Full-time', icon:'finance',   visible:true }
+    ];
+
+    function getJobs() {
+      try {
+        const s = localStorage.getItem('jobmela_jobs');
+        if (s) return JSON.parse(s);
+        localStorage.setItem('jobmela_jobs', JSON.stringify(sampleJobs));
+        return sampleJobs;
+      } catch { return sampleJobs; }
+    }
+    function saveJobs(jobs) { localStorage.setItem('jobmela_jobs', JSON.stringify(jobs)); }
+
+    let jobs = getJobs();
+
+    function updateAdminStats() {
+      document.getElementById('stat-total-jobs').textContent   = jobs.length;
+      document.getElementById('stat-visible-jobs').textContent = jobs.filter(j => j.visible).length;
+      document.getElementById('stat-hidden-jobs').textContent  = jobs.filter(j => !j.visible).length;
+    }
+
+    function renderAdminJobs() {
+      const container = document.getElementById('admin-jobs-list');
+      const noJobsMsg = document.getElementById('no-admin-jobs');
+      if (jobs.length === 0) { container.innerHTML = ''; noJobsMsg.classList.remove('hidden'); return; }
+      noJobsMsg.classList.add('hidden');
+      container.innerHTML = jobs.map(job => `
+        <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+          <div class="flex-1 min-w-0">
+            <div class="flex flex-wrap items-center gap-2 mb-1">
+              <span class="font-bold text-gray-900">${job.title}</span>
+              <span class="px-2.5 py-0.5 ${job.visible ? 'bg-blue-100 text-blue-700' : 'bg-orange-100 text-orange-700'} text-xs font-semibold rounded-full">
+                ${job.visible ? '👁️ Visible' : '🚫 Hidden'}
+              </span>
+            </div>
+            <p class="text-gray-600 text-sm">${job.company} • ${job.location} • ${job.salary}</p>
+          </div>
+          <div class="flex gap-2 flex-shrink-0">
+            <button onclick="toggleJobVisibility('${job.id}')"
+              class="px-4 py-2 ${job.visible ? 'bg-orange-100 text-orange-700 hover:bg-orange-200' : 'bg-blue-100 text-blue-700 hover:bg-blue-200'} font-medium rounded-lg transition-colors text-sm">
+              ${job.visible ? 'Hide' : 'Show'}
+            </button>
+            <button onclick="deleteJob('${job.id}')"
+              class="px-4 py-2 bg-red-100 text-red-600 font-medium rounded-lg hover:bg-red-200 transition-colors text-sm">
+              Delete
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function handleAddJob(event) {
+      event.preventDefault();
+      const newJob = {
+        id:       'job_' + Date.now(),
+        title:    document.getElementById('job-title').value,
+        company:  document.getElementById('job-company').value,
+        location: document.getElementById('job-location').value,
+        salary:   document.getElementById('job-salary').value,
+        type:     document.getElementById('job-type').value,
+        icon:     document.getElementById('job-icon').value,
+        visible:  document.getElementById('job-visible').checked
+      };
+      jobs.push(newJob);
+      saveJobs(jobs);
+      document.getElementById('add-job-form').reset();
+      renderAdminJobs();
+      updateAdminStats();
+      showToast('Job added successfully!');
+    }
+
+    function toggleJobVisibility(jobId) {
+      const job = jobs.find(j => j.id === jobId);
+      if (job) {
+        job.visible = !job.visible;
+        saveJobs(jobs);
+        renderAdminJobs();
+        updateAdminStats();
+        showToast(job.visible ? 'Job is now visible!' : 'Job is now hidden');
+      }
+    }
+
+    function deleteJob(jobId) {
+      if (!confirm('Delete this job?')) return;
+      jobs = jobs.filter(j => j.id !== jobId);
+      saveJobs(jobs);
+      renderAdminJobs();
+      updateAdminStats();
+      showToast('Job deleted successfully!');
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-message').textContent = message;
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 3000);
+    }
+
+    // Init
+    updateAdminStats();
+    renderAdminJobs();
+    renderImagesTable();
+    loadCarouselSettings();
+  </script>
+ </body>
+</html>
